@@ -1,9 +1,6 @@
 package br.unifil.dc.sisop;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Scanner;
@@ -27,7 +24,7 @@ public final class Jsh {
     while (true) {
       exibirPrompt();
       ComandoPrompt comandoEntrado = lerComando();
-//    		executarComando(comandoEntrado);
+      executarComando(comandoEntrado);
     }
   }
 
@@ -38,7 +35,7 @@ public final class Jsh {
   public static void exibirPrompt() throws IOException, InterruptedException {
     String nomeUsuario = System.getProperty("user.name");
     String pwd = System.getProperty("user.dir");
-    System.out.print(nomeUsuario + "#: " + getUserId(nomeUsuario) + pwd + " ");
+    System.out.print(nomeUsuario + "#: " + recuperarIdUsuario(nomeUsuario) + " " + pwd + " ");
   }
 
   /**
@@ -54,9 +51,20 @@ public final class Jsh {
   public static ComandoPrompt lerComando() throws Exception {
     Scanner scanner = new Scanner(System.in);
     String comando = scanner.nextLine();
+    boolean isValid = false;
+    File file = new File(System.getProperty("user.dir"));
+    File afile[] = file.listFiles();
+    if (!comando.equals("ls") || !comando.contains("cd") || !comando.contains("mkdir")
+            || !comando.equals("relogio") || comando.contains("ad")) {
+
+      for (int i = 0; i < afile.length; i++) {
+        isValid = true;
+      }
+      if (!isValid) {
+        System.out.println("Não existe esse comando");
+      }
+    }
     if (comando.equals("ls")) {
-      File file = new File(System.getProperty("user.dir"));
-      File afile[] = file.listFiles();
       int i = 0;
       for (int j = afile.length; i < j; i++) {
         File arquivos = afile[i];
@@ -76,8 +84,8 @@ public final class Jsh {
       String nomeDiretorio = comando.substring(nomeDir + 1, comando.length());
       try {
         String diretorioAtual = System.getProperty("user.dir");
-        File file = new File(diretorioAtual + "/" + nomeDiretorio);
-        file.mkdir();
+        File diretorioNovo = new File(diretorioAtual + "/" + nomeDiretorio);
+        diretorioNovo.mkdir();
       } catch (Exception e) {
         throw new Exception("Não foi possivel criar o diretório");
       }
@@ -92,17 +100,17 @@ public final class Jsh {
       int nomeDir = comando.indexOf(" ");
       String nomeDiretorio = comando.substring(nomeDir + 1, comando.length());
       try {
-        File file = new File(nomeDiretorio);
-        if ((file.exists()) && (file.isDirectory())) {
-          file.delete();
+        File diretorioRemovido = new File(nomeDiretorio);
+        if ((diretorioRemovido.exists()) && (diretorioRemovido.isDirectory())) {
+          diretorioRemovido.delete();
         }
       } catch (Exception e) {
         e.printStackTrace();
       }
     }
-
     return null;
   }
+
 
   /**
    * Recebe o comando lido e os parametros, verifica se eh um comando interno e,
@@ -116,23 +124,7 @@ public final class Jsh {
    * programa desconhecido.
    */
   public static void executarComando(ComandoPrompt comando) {
-    if (comando.equals("ls")) {
-      File file = new File(System.getProperty("user.dir"));
-      File afile[] = file.listFiles();
-      int i = 0;
-      for (int j = afile.length; i < j; i++) {
-        File arquivos = afile[i];
-        System.out.println(arquivos.getName());
-      }
-    }
 
-    if (comando.equals("cd")) {
-      File file = new File(System.getProperty("user.dir"));
-      System.getProperty("user.dir", file.getParent());
-
-    }
-
-    throw new RuntimeException("Método ainda não implementado.");
   }
 
   public static int executarPrograma(ComandoPrompt comando) {
@@ -148,7 +140,7 @@ public final class Jsh {
       BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
       String line;
 
-      while((line = reader.readLine()) != null) {
+      while ((line = reader.readLine()) != null) {
         id = Integer.valueOf(line);
       }
 
@@ -158,6 +150,33 @@ public final class Jsh {
     return id;
   }
 
+  private static Integer recuperarIdUsuario(String userName) {
+    Integer id = null;
+    Process process;
+    try {
+      process = Runtime.getRuntime().exec("id -u " + userName);
+      process.waitFor();
+      id = recuperarCodigoRetornoPrograma(process.getInputStream());
+    } catch (IOException | InterruptedException e) {
+      e.printStackTrace();
+    }
+    return id;
+  }
+
+  private static int recuperarCodigoRetornoPrograma(InputStream is) {
+    int codigoRetorno = 0;
+    try (BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
+      String line;
+
+      while ((line = reader.readLine()) != null) {
+        codigoRetorno = Integer.valueOf(line);
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    return codigoRetorno;
+  }
 
   /**
    * Entrada do programa. Provavelmente você não precisará modificar esse método.
