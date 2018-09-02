@@ -2,6 +2,7 @@ package br.unifil.dc.sisop;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
 
@@ -14,6 +15,7 @@ import java.util.Scanner;
 public final class Jsh {
 
   ComandosInternos comandosInternos;
+
 
 
   /**
@@ -49,22 +51,30 @@ public final class Jsh {
    * @return
    */
   public static ComandoPrompt lerComando() throws Exception {
+    ArrayList<String> comandosShell = new ArrayList<String>();
+    comandosShell.add("la");
+    comandosShell.add("cd");
+    comandosShell.add("encerrar");
+    comandosShell.add("mdt");
+    comandosShell.add("mesg_do_dia");
+    comandosShell.add("relogio");
+    comandosShell.add("falha_arbitraria");
     Scanner scanner = new Scanner(System.in);
     String comando = scanner.nextLine();
     boolean isValid = false;
     File file = new File(System.getProperty("user.dir"));
     File afile[] = file.listFiles();
-    if (!comando.equals("ls") || !comando.contains("cd") || !comando.contains("mkdir")
-            || !comando.equals("relogio") || comando.contains("ad")) {
-
+    if(!comandosShell.contains(comando)) {
       for (int i = 0; i < afile.length; i++) {
-        isValid = true;
+        if(comando == afile[i].getName()) {
+          isValid = true;
+        }
       }
       if (!isValid) {
         System.out.println("Não existe esse comando");
       }
     }
-    if (comando.equals("ls")) {
+    if (comando.equals("la")) {
       int i = 0;
       for (int j = afile.length; i < j; i++) {
         File arquivos = afile[i];
@@ -79,13 +89,14 @@ public final class Jsh {
 
     }
 
-    if (comando.contains("mkdir")) {
+    if (comando.contains("mdt")) {
       int nomeDir = comando.indexOf(" ");
       String nomeDiretorio = comando.substring(nomeDir + 1, comando.length());
       try {
         String diretorioAtual = System.getProperty("user.dir");
         File diretorioNovo = new File(diretorioAtual + "/" + nomeDiretorio);
         diretorioNovo.mkdir();
+        System.out.println("Diretório " + diretorioNovo + " criado");
       } catch (Exception e) {
         throw new Exception("Não foi possivel criar o diretório");
       }
@@ -103,12 +114,25 @@ public final class Jsh {
         File diretorioRemovido = new File(nomeDiretorio);
         if ((diretorioRemovido.exists()) && (diretorioRemovido.isDirectory())) {
           diretorioRemovido.delete();
+          System.out.println("Diretório " + diretorioRemovido + " removido");
         }
       } catch (Exception e) {
         e.printStackTrace();
       }
     }
-    return null;
+
+    if(comando.equals("encerrar")) {
+      System.exit(0);
+    }
+
+    if(comando.equals("mesg_do_dia")) {
+      System.out.println("The only way around is through.");
+    }
+
+    if(comando.equals("falha_arbitraria")) {
+      System.out.println("Invalid arguments. Please, RTFM.");
+    }
+     return null;
   }
 
 
