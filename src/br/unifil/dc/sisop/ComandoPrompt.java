@@ -13,8 +13,7 @@ import java.util.Collections;
 public class ComandoPrompt {
     
     public ComandoPrompt(String comando) {
-        // ESCREVA AQUI SEU CODIGO PARA ESTRUTURAR O COMANDO RECEBIDO DO PROMPT.
-        throw new RuntimeException("Método ainda não implementado");
+         this.nome = comando;
     }
     
     /**
@@ -38,5 +37,5 @@ public class ComandoPrompt {
     }
     
     private final String nome;
-    private final String[] argumentos;
+    private final String[] argumentos = new String[0];
 }

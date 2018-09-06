@@ -37,7 +37,7 @@ public final class Jsh {
   public static void exibirPrompt() throws IOException, InterruptedException {
     String nomeUsuario = System.getProperty("user.name");
     String pwd = System.getProperty("user.dir");
-    System.out.print(nomeUsuario + "#: " + recuperarIdUsuario(nomeUsuario) + " " + pwd + " ");
+    System.out.print(nomeUsuario + "#:" + recuperarIdUsuario(nomeUsuario) + " " + pwd + " ");
   }
 
   /**
@@ -61,6 +61,7 @@ public final class Jsh {
     comandosShell.add("falha_arbitraria");
     Scanner scanner = new Scanner(System.in);
     String comando = scanner.nextLine();
+    ComandoPrompt comandoPrompt = new ComandoPrompt(comando);
     boolean isValid = false;
     File file = new File(System.getProperty("user.dir"));
     File afile[] = file.listFiles();
@@ -74,65 +75,8 @@ public final class Jsh {
         System.out.println("Não existe esse comando");
       }
     }
-    if (comando.equals("la")) {
-      int i = 0;
-      for (int j = afile.length; i < j; i++) {
-        File arquivos = afile[i];
-        System.out.println(arquivos.getName());
-      }
-    }
 
-    if (comando.contains("cd")) {
-      int nomeDir = comando.indexOf(" ");
-      String nomeDiretorio = comando.substring(nomeDir + 1, comando.length());
-      System.setProperty("user.dir", nomeDiretorio);
-
-    }
-
-    if (comando.contains("mdt")) {
-      int nomeDir = comando.indexOf(" ");
-      String nomeDiretorio = comando.substring(nomeDir + 1, comando.length());
-      try {
-        String diretorioAtual = System.getProperty("user.dir");
-        File diretorioNovo = new File(diretorioAtual + "/" + nomeDiretorio);
-        diretorioNovo.mkdir();
-        System.out.println("Diretório " + diretorioNovo + " criado");
-      } catch (Exception e) {
-        throw new Exception("Não foi possivel criar o diretório");
-      }
-    }
-
-    if (comando.equals("relogio")) {
-      SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy - hh:mm:ss");
-      System.out.println("Hoje é: " + dateFormat.format(new Date()));
-    }
-
-    if (comando.contains("ad")) {
-      int nomeDir = comando.indexOf(" ");
-      String nomeDiretorio = comando.substring(nomeDir + 1, comando.length());
-      try {
-        File diretorioRemovido = new File(nomeDiretorio);
-        if ((diretorioRemovido.exists()) && (diretorioRemovido.isDirectory())) {
-          diretorioRemovido.delete();
-          System.out.println("Diretório " + diretorioRemovido + " removido");
-        }
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    }
-
-    if(comando.equals("encerrar")) {
-      System.exit(0);
-    }
-
-    if(comando.equals("mesg_do_dia")) {
-      System.out.println("The only way around is through.");
-    }
-
-    if(comando.equals("falha_arbitraria")) {
-      System.out.println("Invalid arguments. Please, RTFM.");
-    }
-     return null;
+    return comandoPrompt;
   }
 
 
@@ -147,8 +91,42 @@ public final class Jsh {
    * Se nao for nenhuma das situacoes anteriores, exibe uma mensagem de comando ou
    * programa desconhecido.
    */
-  public static void executarComando(ComandoPrompt comando) {
+  public static void executarComando(ComandoPrompt comando) throws Exception {
+        boolean isValid = false;
+    File file = new File(System.getProperty("user.dir"));
+    File afile[] = file.listFiles();
 
+    if (comando.getNome().equals("la")) {
+      ComandosInternos.escreverListaArquivos(java.util.Optional.ofNullable(comando.getNome()));
+    }
+
+    if (comando.getNome().contains("cd")) {
+       ComandosInternos.mudarDiretorioTrabalho(comando.getNome());
+    }
+
+    if (comando.getNome().contains("mdt")) {
+      ComandosInternos.criarNovoDiretorio(comando.getNome());
+    }
+
+    if (comando.getNome().equals("relogio")) {
+      ComandosInternos.exibirRelogio();
+    }
+
+    if (comando.getNome().contains("ad")) {
+      ComandosInternos.apagarDiretorio(comando.getNome());
+    }
+
+    if(comando.getNome().equals("encerrar")) {
+      System.exit(0);
+    }
+
+    if(comando.getNome().equals("mesg_do_dia")) {
+      System.out.println("The only way around is through.");
+    }
+
+    if(comando.getNome().equals("falha_arbitraria")) {
+      System.out.println("Invalid arguments. Please, RTFM.");
+    }
   }
 
   public static int executarPrograma(ComandoPrompt comando) {
