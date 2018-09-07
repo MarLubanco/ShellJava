@@ -12,7 +12,7 @@ import java.util.Optional;
  * @version 180823
  */
 public class ComandosInternos {
-    
+
     public static int exibirRelogio() {  //TODO FEITOOO
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy - hh:mm:ss");
         System.out.println("Hoje é: " + dateFormat.format( new Date() ));
@@ -23,6 +23,9 @@ public class ComandosInternos {
         File file = new File(System.getProperty("user.dir"));
         File afile[] = file.listFiles();
         int i = 0;
+        if(afile.length == 0) {
+            System.out.println("Esse diretório não possuí arquivos");
+        }
         for (int j = afile.length; i < j; i++) {
             File arquivos = afile[i];
             System.out.println(arquivos.getName());
@@ -33,14 +36,21 @@ public class ComandosInternos {
     public static int criarNovoDiretorio(String nomeDire) throws Exception { //TODO FEITOOO
         int nomeDir = nomeDire.indexOf(" ");
         String nomeDiretorio = nomeDire.substring(nomeDir + 1, nomeDire.length());
+        boolean isCriado = false;
         try {
             String diretorioAtual = System.getProperty("user.dir");
             File file = new File(diretorioAtual + "/" + nomeDiretorio);
-            file.mkdir();
+            isCriado = file.mkdir();
+
+            if(!isCriado) {
+                System.out.println("Esse diretório não foi possível ser criado");
+            }
             return  1;
         } catch (Exception e) {
             throw new Exception("Não foi possivel criar o diretório");
         }
+
+
     }
     
     public static int apagarDiretorio(String nomeDire) { //TODO FEITOOO
@@ -49,18 +59,27 @@ public class ComandosInternos {
         try {
             File file = new File(nomeDiretorio);
             if ((file.exists()) && (file.isDirectory())) {
-                file.delete();
+               file.delete();
+            } else {
+                System.out.println("O diretório não pode ser excluído");
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+
         return 1;
     }
     
     public static int mudarDiretorioTrabalho(String nomeDire){ //TODO FEITOOO
         int nomeDir = nomeDire.indexOf(" ");
         String nomeDiretorio = nomeDire.substring(nomeDir + 1, nomeDire.length());
-        System.setProperty("user.dir", nomeDiretorio);
+        File folder = new File(nomeDiretorio);
+        if(folder.exists()) {
+            System.setProperty("user.dir", folder.getAbsolutePath());
+        } else {
+            System.out.println("O diretório informado não existe");
+        }
         return 1;
     }
     

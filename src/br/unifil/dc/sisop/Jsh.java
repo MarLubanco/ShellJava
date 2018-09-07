@@ -37,7 +37,7 @@ public final class Jsh {
   public static void exibirPrompt() throws IOException, InterruptedException {
     String nomeUsuario = System.getProperty("user.name");
     String pwd = System.getProperty("user.dir");
-    System.out.print(nomeUsuario + "#:" + recuperarIdUsuario(nomeUsuario) + " " + pwd + " ");
+    System.out.print(nomeUsuario + "#" + recuperarIdUsuario(nomeUsuario) + ": " + pwd + " ");
   }
 
   /**
