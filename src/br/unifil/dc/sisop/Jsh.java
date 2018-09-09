@@ -1,9 +1,7 @@
 package br.unifil.dc.sisop;
 
 import java.io.*;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Scanner;
 
 /**
@@ -53,9 +51,7 @@ public final class Jsh {
   public static ComandoPrompt lerComando() throws Exception {
     ArrayList<String> comandosShell = new ArrayList<String>();
     comandosShell.add("la");
-    comandosShell.add("cd");
     comandosShell.add("encerrar");
-    comandosShell.add("mdt");
     comandosShell.add("mesg_do_dia");
     comandosShell.add("relogio");
     comandosShell.add("falha_arbitraria");
@@ -63,18 +59,32 @@ public final class Jsh {
     String comando = scanner.nextLine();
     ComandoPrompt comandoPrompt = new ComandoPrompt(comando);
     boolean isValid = false;
+    boolean isArquivo = false;
+    int contador = 0;
     File file = new File(System.getProperty("user.dir"));
     File afile[] = file.listFiles();
     if(!comandosShell.contains(comando)) {
-      for (int i = 0; i < afile.length; i++) {
-        if(comando == afile[i].getName()) {
-          isValid = true;
+      if (comando.contains("cd") || comando.contains("mdt")) {
+        isValid = true;
+      } else {
+        for (int i = 0; i < afile.length; i++) {
+          if (comando.equals(afile[i].getName())) {
+            contador ++;
+          }
         }
       }
+    } else {
+      isValid = true;
+    }
       if (!isValid) {
         System.out.println("Não existe esse comando");
       }
-    }
+
+      if(contador > 0) {
+        System.out.println("Existe um arquivo com esse nome");
+      } else {
+        System.out.println("Não existe nenhum arquivo com esse nome");
+      }
 
     return comandoPrompt;
   }
@@ -100,11 +110,11 @@ public final class Jsh {
       ComandosInternos.escreverListaArquivos(java.util.Optional.ofNullable(comando.getNome()));
     }
 
-    if (comando.getNome().contains("cd")) {
+    if (comando.getNome().contains("mdt")) {
        ComandosInternos.mudarDiretorioTrabalho(comando.getNome());
     }
 
-    if (comando.getNome().contains("mdt")) {
+    if (comando.getNome().contains("cd")) {
       ComandosInternos.criarNovoDiretorio(comando.getNome());
     }
 
