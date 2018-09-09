@@ -82,7 +82,7 @@ public final class Jsh {
 
       if(contador > 0) {
         System.out.println("Existe um arquivo com esse nome");
-      } else {
+      } else if(!isValid){
         System.out.println("Não existe nenhum arquivo com esse nome");
       }
 
