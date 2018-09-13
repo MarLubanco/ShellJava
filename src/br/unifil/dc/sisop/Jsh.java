@@ -64,11 +64,23 @@ public final class Jsh {
     File file = new File(System.getProperty("user.dir"));
     File afile[] = file.listFiles();
     if(!comandosShell.contains(comando)) {
-      if (comando.contains("cd") || comando.contains("mdt")) {
+      if (comando.contains("cd") || comando.contains("mdt") || comando.contains("ad")) {
         isValid = true;
       } else {
         for (int i = 0; i < afile.length; i++) {
           if (comando.equals(afile[i].getName())) {
+            try {
+              BufferedReader br = new BufferedReader(new FileReader(file.getAbsolutePath() + "/" + comando));
+              while (br.ready()) {
+                String linha = br.readLine();
+                System.out.println(linha);
+                br.close();
+
+              }
+            } catch (Exception e) {
+              e.printStackTrace();
+            }
+
             contador ++;
           }
         }
