@@ -1,6 +1,7 @@
 package br.unifil.dc.sisop;
 
 import java.io.File;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Optional;
@@ -14,8 +15,8 @@ import java.util.Optional;
 public class ComandosInternos {
 
     public static int exibirRelogio() {  //TODO FEITOOO
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy - hh:mm:ss");
-        System.out.println("Hoje é: " + dateFormat.format( new Date() ));
+        Timestamp dataDeHoje = new Timestamp(System.currentTimeMillis());
+        System.out.println("Hoje é: " + dataDeHoje);
         return 0;
     }
     

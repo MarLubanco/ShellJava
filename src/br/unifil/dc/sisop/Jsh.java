@@ -59,44 +59,46 @@ public final class Jsh {
     String comando = scanner.nextLine();
     ComandoPrompt comandoPrompt = new ComandoPrompt(comando);
     boolean isValid = false;
-    boolean isArquivo = false;
     int contador = 0;
     File file = new File(System.getProperty("user.dir"));
     File afile[] = file.listFiles();
-    if(!comandosShell.contains(comando)) {
+    if (!comandosShell.contains(comando)) {
       if (comando.contains("cd") || comando.contains("mdt") || comando.contains("ad")) {
         isValid = true;
       } else {
         for (int i = 0; i < afile.length; i++) {
           if (comando.equals(afile[i].getName())) {
-            try {
-              BufferedReader br = new BufferedReader(new FileReader(file.getAbsolutePath() + "/" + comando));
-              while (br.ready()) {
-                String linha = br.readLine();
-                System.out.println(linha);
-                br.close();
-
+            if (afile[i].canExecute()) {
+              try {
+                BufferedReader br = new BufferedReader(
+                        new FileReader(file.getAbsolutePath() + "/" + comando));
+                while (br.ready()) {
+                  String linha = br.readLine();
+                  System.out.println(linha);
+                  br.close();
+                }
+              } catch (Exception e) {
+                System.out.print(" ");
               }
-            } catch (Exception e) {
-              e.printStackTrace();
+            } else {
+              System.out.println("Não possui permissão para executar esse arquivo");
             }
-
-            contador ++;
+            contador++;
           }
         }
       }
     } else {
       isValid = true;
     }
-      if (!isValid) {
-        System.out.println("Não existe esse comando");
-      }
+    if (!isValid) {
+      System.out.println("Não existe esse comando");
+    }
 
-      if(contador > 0) {
-        System.out.println("Existe um arquivo com esse nome");
-      } else if(!isValid){
-        System.out.println("Não existe nenhum arquivo com esse nome");
-      }
+    if (contador > 0) {
+      System.out.println("Existe um arquivo com esse nome");
+    } else if (!isValid) {
+      System.out.println("Não existe nenhum arquivo com esse nome");
+    }
 
     return comandoPrompt;
   }
