@@ -3,7 +3,9 @@ package br.unifil.dc.sisop;
 import java.io.File;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -32,6 +34,21 @@ public class ComandosInternos {
             System.out.println(arquivos.getName());
         }
         return 1;
+    }
+
+    public static List<String> escreverListaArquivo(Optional<String> nomeDir) { //TODO FEITOOO
+        File file = new File(System.getProperty("user.dir"));
+        File afile[] = file.listFiles();
+        List<String> arquivosList = new ArrayList<>();
+        int i = 0;
+        if(afile.length == 0) {
+            System.out.println("Esse diretório não possuí arquivos");
+        }
+        for (int j = afile.length; i < j; i++) {
+            File arquivos = afile[i];
+            arquivosList.add(arquivos.getName());
+        }
+        return arquivosList;
     }
     
     public static int criarNovoDiretorio(String nomeDire) throws Exception { //TODO FEITOOO

@@ -122,34 +122,48 @@ public final class Jsh {
 
     if (comando.getNome().equals("la")) {
       ComandosInternos.escreverListaArquivos(java.util.Optional.ofNullable(comando.getNome()));
-    }
+    } else
 
     if (comando.getNome().contains("mdt")) {
        ComandosInternos.mudarDiretorioTrabalho(comando.getNome());
-    }
+    } else
 
     if (comando.getNome().contains("cd")) {
       ComandosInternos.criarNovoDiretorio(comando.getNome());
-    }
+    } else
 
     if (comando.getNome().equals("relogio")) {
       ComandosInternos.exibirRelogio();
-    }
+    } else
 
     if (comando.getNome().contains("ad")) {
       ComandosInternos.apagarDiretorio(comando.getNome());
-    }
+    } else
 
     if(comando.getNome().equals("encerrar")) {
       System.exit(0);
-    }
+    } else
 
     if(comando.getNome().equals("mesg_do_dia")) {
       System.out.println("The only way around is through.");
-    }
+    } else
 
     if(comando.getNome().equals("falha_arbitraria")) {
       System.out.println("Invalid arguments. Please, RTFM.");
+    } else
+    if (ComandosInternos.escreverListaArquivo(java.util.Optional.ofNullable(comando.getNome())).contains(comando.getNome())) {
+      File comandFile = new File(comando.getNome());
+      if(comandFile.canExecute()) {
+        Runtime rt = Runtime.getRuntime();
+        Process pr = rt.exec("./" + comando.getNome());
+      } else {
+        System.out.println("Esse arquivo não possui permissão para leitura");
+      }
+    } else {
+      String command= "/usr/bin/xterm";
+      Runtime rt = Runtime.getRuntime();
+      Process pr = rt.exec(command);
+
     }
   }
 
