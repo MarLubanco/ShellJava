@@ -144,12 +144,14 @@ public final class Jsh {
       System.exit(0);
     } else
 
-    if(comando.getNome().equals("mesg_do_dia")) {
-      System.out.println("The only way around is through.");
+    if(comando.getNome().equals("msg_do_dia")) {
+      Runtime rt = Runtime.getRuntime();
+      Process pr = rt.exec("./" + comando.getNome());
     } else
 
     if(comando.getNome().equals("falha_arbitraria")) {
-      System.out.println("Invalid arguments. Please, RTFM.");
+      Runtime rt = Runtime.getRuntime();
+      Process pr = rt.exec("./" + comando.getNome());
     } else
     if (ComandosInternos.escreverListaArquivo(java.util.Optional.ofNullable(comando.getNome())).contains(comando.getNome())) {
       File comandFile = new File(comando.getNome());
